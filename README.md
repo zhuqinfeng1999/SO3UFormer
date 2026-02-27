@@ -63,18 +63,31 @@ SO3UFormer combines five ingredients (as used in our main model):
 
 ## 🧭 Table of Contents
 
+- [🧩 Pretrained Model](#-pretrained-model)
 - [⚡ Quick Start](#-quick-start)
 - [📦 Installation](#-installation)
 - [🗂️ Dataset Preparation](#️-dataset-preparation)
 - [🧪 Pose35 Generation](#-pose35-generation)
-- [▶️ Training](#️-training)
-- [🧪 Evaluation: OOD SO(3) Stress Test](#-evaluation-ood-so3-stress-test)
+- [▶️ Training (Main Model)](#-training-main-model)
+- [🧪 Evaluation: OOD SO(3) Stress Test (Full3D)](#-evaluation-ood-so3-stress-test-full3d)
 - [📊 Results](#-results)
 - [📁 Repo Structure](#-repo-structure)
 - [🧾 Citation](#-citation)
 - [📬 Contact](#-contact)
 - [🙏 Acknowledgement](#-acknowledgement)
 - [📄 License](#-license)
+
+---
+## 🧩 Pretrained Model
+
+Download the pretrained checkpoint (Google Drive) and place it at:
+
+- `pretrained/model_best_miou.pth`
+
+**Download:** https://drive.google.com/file/d/1wY-MtVnu41SJbzp8o0sCNuEvXuwgKvWJ/view?usp=sharing
+
+> [!NOTE]
+> The evaluation scripts expect `WEIGHTS=./pretrained/model_best_miou.pth`.
 
 ---
 
