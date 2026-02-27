@@ -1,115 +1,157 @@
-# SO3UFormer: Rotation-Robust Panoramic Segmentation (Pose35)
 
-[![arXiv](https://img.shields.io/badge/arXiv-2602.22867-b31b1b.svg)](https://arxiv.org/abs/2602.22867)
+# SO3UFormer: Rotation-Robust Panoramic Segmentation
 
-Official code release for **SO3UFormer** and the **Pose35** protocol:
-- Pose35 dataset construction (Stanford2D3D-derived, pose-perturbed)
-- Training code for the main model
-- **OOD SO(3) stress test** evaluation (full 3D reorientations)
-- Pretrained checkpoint
+<p>
+  <a href="https://arxiv.org/abs/2602.22867">
+    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-2602.22867-b31b1b.svg" />
+  </a>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white" />
+  <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-1.12%2B-EE4C2C?logo=pytorch&logoColor=white" />
+  <img alt="Task" src="https://img.shields.io/badge/Task-Panoramic%20Segmentation-00A3E0" />
+  <img alt="Domain" src="https://img.shields.io/badge/Domain-360%2F%20Spherical%20Vision-4CAF50" />
+  <img alt="Robustness" src="https://img.shields.io/badge/Robustness-SO(3)%20OOD%20Stress%20Test-1F4E79" />
+  <img alt="PRs" src="https://img.shields.io/badge/PRs-Welcome-brightgreen" />
+</p>
 
-**Paper:** SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Segmentation  
+**Official code release for SO3UFormer and the Pose35 protocol**  
+Pose35 generation • Training • **OOD SO(3) stress test** evaluation • Pretrained checkpoint
+
+**Paper:** *SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Segmentation*  
 **arXiv:** https://arxiv.org/abs/2602.22867
 
----
-
-## Overview
-
-SO3UFormer studies a practical failure mode in panoramic semantic segmentation: models trained on gravity-aligned panoramas often entangle semantics with a privileged coordinate frame and can collapse under full 3D camera reorientations. We address this by removing absolute latitude bias and using geometry-consistent spherical operators, then evaluate robustness with an OOD **SO(3) stress test**.
+</div>
 
 ---
 
-## Abstract
+## ✨ What is SO3UFormer?
 
-Panoramic semantic segmentation models are typically trained under a strict gravity-aligned assumption. However, real-world captures often deviate from this canonical orientation due to unconstrained camera motions, such as the rotational jitter of handheld devices or the dynamic attitude shifts of aerial platforms. This discrepancy causes standard spherical Transformers to overfit global latitude cues, leading to performance collapse under 3D reorientations. To address this, we introduce SO3UFormer, a rotation-robust architecture designed to learn intrinsic spherical features that are *less sensitive* to the underlying coordinate frame. Our approach rests on three geometric pillars: (1) an intrinsic feature formulation that decouples the representation from the gravity vector by removing absolute latitude encoding; (2) quadrature-consistent spherical attention that accounts for non-uniform sampling densities; and (3) a gauge-aware relative positional mechanism that encodes local angular geometry using *tangent-plane projected angles* and *discrete gauge pooling*, avoiding reliance on global axes. We further use index-based spherical resampling together with a *logit-level* *SO(3)*-consistency regularizer during training. To rigorously benchmark robustness, we introduce Pose35, a dataset variant of Stanford2D3D perturbed by random rotations within ±35°. Under the extreme test of arbitrary full *SO(3)* rotations, existing SOTAs fail catastrophically: the baseline SphereUFormer drops from 67.53 mIoU to 25.26 mIoU. In contrast, SO3UFormer demonstrates remarkable stability, achieving 72.03 mIoU on Pose35 and retaining 70.67 mIoU under full *SO(3)* rotations.
+Panoramic segmentation models are often trained under an implicit *upright / gravity-aligned* assumption.  
+When the camera undergoes roll–pitch changes (e.g., drones banking, handheld jitter), many methods leak semantics into a privileged frame and can fail under full 3D reorientations.
 
-
-
----
-
-## What’s in this repo
-
-- `src/` — core code (training, model, metrics)
-- `src/tools/`
-  - `make_pose_perturbed_stanford2d3d.py` — Pose35 dataset generation
-  - `rotation_sensitivity.py` — OOD SO(3) stress-test evaluation
-- `scripts/` — convenience scripts
-  - `make_pose35.sh` — generate Pose35 from Stanford2D3D
-  - `train_so3uformer.sh` — train the main model
-  - `eval_so3_full3d.sh` — run OOD SO(3) evaluation
+SO3UFormer targets **rotation-robust spherical features** and evaluates robustness with an **out-of-distribution (OOD) SO(3) stress test** on **Pose35**, a pose-perturbed variant of Stanford2D3D.
 
 ---
 
-## Pretrained model
+## 🔥 Key Ideas (implementation-faithful)
 
-Download the pretrained checkpoint (Google Drive) and place it at:
+SO3UFormer combines five ingredients (as used in our main model):
 
-- `pretrained/model_best_miou.pth`
+- **No absolute latitude positional encoding** (removes the strongest “gravity cue” shortcut)
+- **Quadrature-consistent local attention** (logit correction with mean-normalized mesh area weights)
+- **Gauge-pooled Fourier relative bias** (tangent-plane projected angles + discrete gauge pooling; no global axes)
+- **Geometry-consistent multi-scale sampling** (area-weighted downsample + geodesic-kernel upsample)
+- **Training-time SO(3) consistency regularizer** (logit-space MSE under index-based spherical resampling)
 
-**Download:** https://drive.google.com/file/d/1wY-MtVnu41SJbzp8o0sCNuEvXuwgKvWJ/view?usp=sharing
-
-Expected usage in evaluation scripts:
-- `WEIGHTS=./pretrained/model_best_miou.pth`
+> [!NOTE]
+> This repo focuses on a *practical robustness setting*: we train on Pose35 (±35° pose perturbations) and evaluate with a **full SO(3)** OOD stress test.
 
 ---
 
-## Installation
+## 🖼️ Figures
 
-### Requirements
-- Python 3.8+
-- PyTorch + torchvision (match your CUDA runtime)
+<p align="center">
+  <img src="figures/fig2.jpg" width="92%" />
+</p>
+<p align="center"><i>SO3UFormer overview: gauge-aware attention, geometry-consistent sampling, and SO(3) consistency regularization.</i></p>
 
-Install dependencies:
+<p align="center">
+  <img src="figures/fig3.jpg" width="92%" />
+</p>
+<p align="center"><i>Qualitative SO(3) stress test comparisons on Pose35 validation panoramas.</i></p>
+
+---
+
+## 🧭 Table of Contents
+
+- [⚡ Quick Start](#-quick-start)
+- [📦 Installation](#-installation)
+- [🗂️ Dataset Preparation](#️-dataset-preparation)
+- [🧪 Pose35 Generation](#-pose35-generation)
+- [▶️ Training](#️-training)
+- [🧪 Evaluation: OOD SO(3) Stress Test](#-evaluation-ood-so3-stress-test)
+- [📊 Results](#-results)
+- [📁 Repo Structure](#-repo-structure)
+- [🧾 Citation](#-citation)
+- [📬 Contact](#-contact)
+- [🙏 Acknowledgement](#-acknowledgement)
+- [📄 License](#-license)
+
+---
+
+## ⚡ Quick Start
+
+> [!TIP]
+> If you already have (i) Stanford2D3D downloaded under `DATA_ROOT`, (ii) Pose35 generated, and (iii) the pretrained weights placed at `./pretrained/model_best_miou.pth`, you can run the OOD SO(3) stress test in one command.
+
 ```bash
-pip install -r requirements.txt
+DATA_ROOT=<data_root> \
+WEIGHTS=./pretrained/model_best_miou.pth \
+OUT_DIR=./outputs/so3_eval \
+  bash scripts/eval_so3_full3d.sh
 ````
 
 ---
 
-## Dataset: Stanford2D3D
+## 📦 Installation
 
-Download **Stanford2D3D** and place it under your data root:
+### Requirements
 
-```text
-<data_root>/stanford2d3d/
+* Python **3.8+**
+* PyTorch + torchvision (match your CUDA runtime)
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
-## Pose35 generation
+## 🗂️ Dataset Preparation
 
-This project uses a pose-perturbed dataset:
+Download **Stanford2D3D** and place it under your data root:
 
 ```text
-stanford2d3d_pose35_axisU_seed0
+<data_root>/
+  stanford2d3d/
+    ...
 ```
 
-Generate it with:
+Pose35 will be created alongside it under the same `<data_root>`.
+
+> [!IMPORTANT]
+> We follow the Stanford2D3D semantic setup with **13 classes**; the **unknown** label is treated as class **0** and ignored in mIoU.
+
+---
+
+## 🧪 Pose35 Generation
+
+Generate Pose35 with:
 
 ```bash
 DATA_ROOT=<data_root> \
   bash scripts/make_pose35.sh
 ```
 
-Output:
+This creates:
 
 ```text
-<data_root>/stanford2d3d_pose35_axisU_seed0/
+<data_root>/stanford2d3d_pose35_axisU_seed0
 ```
 
 ---
 
-## Training (main model)
+## ▶️ Training (Main Model)
 
-The main model configuration corresponds to:
+The main model configuration uses:
 
-* No absolute latitude positional encoding
-* Quadrature-consistent local attention (logit correction with area weights)
-* Gauge-pooled Fourier relative positional bias
-* Geometry-consistent sampling (area-weighted downsample + geodesic-kernel upsample)
-* Training-time logit-space SO(3) consistency regularizer (enabled with weight `λ=0.05`)
+* **No absolute latitude PE** (`phi0`)
+* **Gauge-pooled Fourier bias** (`gauge_pool`)
+* **Quadrature attention (logit mode)**
+* **Geometry-consistent sampling** (area downsample + geodesic kernel upsample)
+* **SO(3) consistency loss** weight = 0.05
 
-Run training (example: 2 GPUs with DDP):
+Train with:
 
 ```bash
 DATA_ROOT=<data_root> \
@@ -121,9 +163,9 @@ MASTER_PORT=29621 \
 
 ---
 
-## Evaluation: OOD SO(3) stress test (Full3D)
+## 🧪 Evaluation: OOD SO(3) Stress Test (Full3D)
 
-Run the SO(3) robustness evaluation:
+Run the SO(3) stress test (full3d group) with:
 
 ```bash
 DATA_ROOT=<data_root> \
@@ -131,12 +173,54 @@ WEIGHTS=./pretrained/model_best_miou.pth \
 OUT_DIR=./outputs/so3_eval \
   bash scripts/eval_so3_full3d.sh
 ```
+---
 
-The script writes a JSON summary and plots under `OUT_DIR`.
+## 📊 Results
+
+### Main ablation (Pose35)
+
+
+> Notes: the last row enables the SO(3)-consistency regularizer (\mathcal{L}_{eq}) with a fixed weight (\lambda=0.05).
+
+| No abs. lat. PE | Quadrature attn. | Gauge-pooled bias | Geo. sampling | 𝓛<sub>eq</sub> | Base mIoU | SO(3) mIoU |
+| --------------: | ---------------: | ----------------: | ------------: | --------------: | --------: | ---------: |
+|                 |                  |                   |               |                 |     67.53 |      25.26 |
+|               ✅ |                  |                   |               |                 |     68.64 |      64.66 |
+|               ✅ |                ✅ |                   |               |                 |     70.05 |      65.20 |
+|               ✅ |                ✅ |                 ✅ |               |                 |     70.42 |      69.72 |
+|               ✅ |                ✅ |                 ✅ |             ✅ |                 |     70.92 |      69.90 |
+|               ✅ |                ✅ |                 ✅ |             ✅ |               ✅ | **72.03** |  **70.67** |
 
 ---
 
-## Citation
+### Comparison (all retrained on Pose35)
+
+| Method                   |      Publication | Base mIoU | SO(3) mIoU |
+| ------------------------ | ---------------: | --------: | ---------: |
+| SFSS                     |        WACV 2024 |     42.02 |      30.99 |
+| HealSwin                 |        CVPR 2024 |     62.45 |      30.55 |
+| Elite360                 |        CVPR 2024 |     67.39 |      25.71 |
+| SphereUFormer (baseline) |        CVPR 2025 |     67.53 |      25.26 |
+| **SO3UFormer (ours)**    | **Under review** | **72.03** |  **70.67** |
+
+---
+
+## 📁 Repo Structure
+
+```text
+.
+├── src/                       # core training + model code
+│   ├── network/               # models (SphereUFormer/SO3UFormer)
+│   └── zqf_tools/             # Pose35 generation + SO(3) stress test
+├── pretrained/                # pretrained weights (place here)
+├── figures/                   # paper figures (fig1/fig2/fig3)
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🧾 Citation
 
 If you find this project useful, please cite:
 
@@ -149,23 +233,29 @@ If you find this project useful, please cite:
   url     = {https://arxiv.org/abs/2602.22867}
 }
 ```
+
 ---
 
-## Paper Figures
+## 📬 Contact
 
-### Figure 1
-![Figure 1](figures/fig1.jpg)
+* Qinfeng Zhu
+* Yunxi Jiang
+* Lei Fan (corresponding)
 
-### Figure 2
-![Figure 2](figures/fig2.jpg)
+(Please open an issue for questions about setup, reproduction, or evaluation.)
 
-### Figure 3
-![Figure 3](figures/fig3.jpg)
 ---
 
-## Acknowledgement
+## 🙏 Acknowledgement
 
 We thank the authors of **SphereUFormer** for releasing the baseline architecture implementation, which we used as a reference codebase for the spherical U-shaped backbone and baseline comparisons:
 [https://github.com/yanivbenny/sphere_uformer](https://github.com/yanivbenny/sphere_uformer)
 
 ---
+
+## 📄 License
+
+See `LICENSE`.
+
+```
+```
