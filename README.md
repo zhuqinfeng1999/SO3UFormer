@@ -5,7 +5,7 @@
   <a href="#english"><b>English</b></a> ｜ <a href="#中文"><b>中文</b></a>
 </p>
 
-# SO3UFormer: Rotation-Robust Panoramic Segmentation
+# SO3UFormer: Rotation-Robust Panoramic Dense Prediction
 
 <p>
   <a href="https://arxiv.org/abs/2602.22867">
@@ -22,7 +22,7 @@
 **Official code release for SO3UFormer and the Pose35 protocol**  
 Pose35 generation • Training • **OOD SO(3) stress test** evaluation • Pretrained checkpoint
 
-**Paper:** *SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Segmentation*  
+**Paper:** *SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Dense Prediction*  
 **arXiv:** https://arxiv.org/abs/2602.22867
 
 </div>
@@ -31,7 +31,7 @@ Pose35 generation • Training • **OOD SO(3) stress test** evaluation • Pret
 
 ## ✨ What is SO3UFormer?
 
-Panoramic segmentation models are often trained under an implicit *upright / gravity-aligned* assumption.  
+Panoramic dense-prediction models are often trained under an implicit *upright / gravity-aligned* assumption.  
 When the camera undergoes roll–pitch changes (e.g., drones banking, handheld jitter), many methods leak semantics into a privileged frame and can fail under full 3D reorientations.
 
 SO3UFormer targets **rotation-robust spherical features** and evaluates robustness with an **out-of-distribution (OOD) SO(3) stress test** on **Pose35**, a pose-perturbed variant of Stanford2D3D.
@@ -245,7 +245,7 @@ If you find this project useful, please cite:
 
 ```bibtex
 @article{zhu2026so3uformer,
-  title   = {SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Segmentation},
+  title   = {SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Dense Prediction},
   author  = {Zhu, Qinfeng and Jiang, Yunxi and Fan, Lei},
   journal = {arXiv preprint arXiv:2602.22867},
   year    = {2026},
@@ -285,7 +285,7 @@ See `LICENSE`.
   <a href="#english"><b>English</b></a> ｜ <a href="#中文"><b>中文</b></a>
 </p>
 
-# SO3UFormer：抗旋转全景分割
+# SO3UFormer：抗旋转全景稠密预测
 
 <p>
   <a href="https://arxiv.org/abs/2602.22867">
@@ -293,7 +293,7 @@ See `LICENSE`.
   </a>
   <img alt="Python" src="https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white" />
   <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-1.12%2B-EE4C2C?logo=pytorch&logoColor=white" />
-  <img alt="Task" src="https://img.shields.io/badge/Task-Panoramic%20Segmentation-00A3E0" />
+  <img alt="Task" src="https://img.shields.io/badge/Task-Panoramic%20Dense%20Prediction-00A3E0" />
   <img alt="Domain" src="https://img.shields.io/badge/Domain-360%2F%20Spherical%20Vision-4CAF50" />
   <img alt="Robustness" src="https://img.shields.io/badge/Robustness-SO(3)%20OOD%20Stress%20Test-1F4E79" />
   <img alt="PRs" src="https://img.shields.io/badge/PRs-Welcome-brightgreen" />
@@ -302,7 +302,7 @@ See `LICENSE`.
 **SO3UFormer 与 Pose35 协议的官方代码发布**  
 Pose35 生成 • 训练 • **OOD SO(3) 压力测试**评估 • 预训练权重
 
-**论文：** *SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Segmentation*  
+**论文：** *SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Dense Prediction*  
 **arXiv：** https://arxiv.org/abs/2602.22867
 
 </div>
@@ -311,7 +311,7 @@ Pose35 生成 • 训练 • **OOD SO(3) 压力测试**评估 • 预训练权�
 
 ## ✨ 什么是 SO3UFormer？
 
-全景分割模型往往在训练时隐含了 *直立 / 与重力对齐* 的假设。  
+全景稠密预测模型往往在训练时隐含了 *直立 / 与重力对齐* 的假设。 
 当相机发生滚转–俯仰变化（例如无人机倾斜飞行、手持抖动）时，许多方法会将语义泄露到某个特权参考系中，从而在完整的 3D 旋转重定向下失效。
 
 SO3UFormer 旨在学习**对旋转鲁棒的球面特征**，并在 **Pose35**（Stanford2D3D 的姿态扰动变体）上通过 **分布外（OOD）SO(3) 压力测试**来评估鲁棒性。
@@ -525,7 +525,7 @@ OUT_DIR=./outputs/so3_eval \
 
 ```bibtex
 @article{zhu2026so3uformer,
-  title   = {SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Segmentation},
+  title   = {SO3UFormer: Learning Intrinsic Spherical Features for Rotation-Robust Panoramic Dense Prediction},
   author  = {Zhu, Qinfeng and Jiang, Yunxi and Fan, Lei},
   journal = {arXiv preprint arXiv:2602.22867},
   year    = {2026},
